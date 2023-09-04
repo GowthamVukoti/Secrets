@@ -3,7 +3,7 @@ const bodyParser=require("body-parser");
 const ejs=require("ejs");
 const app=express()
 const mongoose= require("mongoose");
-const { chownSync } = require("fs");
+const encrypt=require("mongoose-encryption");
 app.use(express.static("public"));
 app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended:true}));
@@ -22,7 +22,15 @@ const userSchema=mongoose.Schema({
     password:String
 });
 
+const secret="Thisisourlittlesecret."
+userSchema.plugin(encrypt,
+    {   
+        secret:secret,
+        encryptedFields:["password"]
+    });
+
 const User=new mongoose.model("User",userSchema);
+
 
 ///////////////////////////////////////////////////GET REQUESTS//////////////////////////////////////////////////////////
 app.get("/",function(req,res){
